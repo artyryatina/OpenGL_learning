@@ -69,9 +69,13 @@ int main(void)
 
     float vertices[] = {  // float* vertices
         // позиція     // колір
-        -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  1.0f, // червоний
-         0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, // зелений
-         0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  1.0f  // синій
+        -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,  1.0f,    // червоний
+         0.5f, -0.5f,   1.0f, 1.0f, 0.0f,  1.0f,    // жовтий
+         0.5f,  0.5f,   0.0f, 1.0f, 0.0f,  1.0f,    // зелений
+
+         0.5f,  0.5f,   0.0f, 1.0f, 0.0f,  1.0f,    // зелений
+        -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,  1.0f,     // синій
+        -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,  1.0f,    // червоний
     };
 
     GLuint VAO; // vertex array object
@@ -116,7 +120,7 @@ int main(void)
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
