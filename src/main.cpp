@@ -31,10 +31,10 @@ int main(void)
 
     auto vertexShaderCode = R"(
         #version 330 core
-        out vec3 ourColor;
+        out vec4 ourColor;
 
         layout(location = 0) in vec4 aPos;
-        layout(location = 1) in vec3 aColor;
+        layout(location = 1) in vec4 aColor;
 
         void main() {
             gl_Position = aPos;
@@ -47,11 +47,11 @@ int main(void)
 
     auto fragmentShaderCode = R"(
         #version 330 core
-        in vec3 ourColor;
+        in vec4 ourColor;
         out vec4 FragColor;
 
         void main() {
-            FragColor = vec4(ourColor, 1.0);
+            FragColor = ourColor;
        }
     )";
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -69,9 +69,9 @@ int main(void)
 
     float vertices[] = {  // float* vertices
         // позиція     // колір
-        -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, // червоний
-         0.5f, -0.5f,  0.0f, 1.0f, 0.0f, // зелений
-         0.0f,  0.5f,  0.0f, 0.0f, 1.0f  // синій
+        -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  1.0f, // червоний
+         0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, // зелений
+         0.5f,  0.5f,  0.0f, 0.0f, 1.0f,  1.0f  // синій
     };
 
     GLuint VAO; // vertex array object
@@ -89,17 +89,17 @@ int main(void)
         2,                  // 2 компоненти: x, y
         GL_FLOAT,           // тип даних
         GL_FALSE,           // не нормалізувати
-        5 * sizeof(float),  // stride: 5 float-а на вершину
+        6 * sizeof(float),  // stride: 5 float-а на вершину
         (void*)0            // offset: починаємо з 0
         );
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(
         1,                               // location - 1
-        3,                               // 3 компоненти: r, g, b
+        4,                               // 3 компоненти: r, g, b
         GL_FLOAT,                        // тип даних
         GL_FALSE,                        // не нормалізувати
-        5 * sizeof(float),               // stride: 5 float-а на вершину
+        6 * sizeof(float),               // stride: 5 float-а на вершину
         (void*)(2 * sizeof(float))       // offset: після x, y
         );
     glEnableVertexAttribArray(1);
