@@ -43,32 +43,39 @@ int main(void)
         -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,  1.0f,    // червоний
          0.5f, -0.5f,   1.0f, 1.0f, 0.0f,  1.0f,    // жовтий
          0.5f,  0.5f,   0.0f, 1.0f, 0.0f,  1.0f,    // зелений
-
-         0.5f,  0.5f,   0.0f, 1.0f, 0.0f,  1.0f,    // зелений
         -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,  1.0f,     // синій
-        -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,  1.0f,    // червоний
     };
 
-    GLuint VAO; // vertex array object
-    GLuint VBO; // data - ідентифікатор для даних - місток CPU та GPU
+    unsigned int indices[] = {
+        0,1,2,
+        0,2,3
+    };
 
-    glGenVertexArrays(1, &VAO);
+    GLuint VBO, indexBuffer; // data - ідентифікатор для даних - місток CPU та GPU
+    GLuint VAO; // vertex array object
+
     glGenBuffers(1, &VBO);
+    glGenBuffers(1, &indexBuffer);
+    glGenVertexArrays(1, &VAO);
 
     glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO); // bind = activate
 
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // bind = activate
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     GLuint posAttribLocation = glGetAttribLocation(shaderProgram, "aPos");
     glVertexAttribPointer(
         posAttribLocation,  // location - 0
         2,                  // 2 компоненти: x, y
         GL_FLOAT,           // тип даних
         GL_FALSE,           // не нормалізувати
-        6 * sizeof(float),  // stride: 5 float-а на вершину
+        6 * sizeof(float),  // stride: 6 float-а на вершину
         (void*)0            // offset: починаємо з 0
         );
-    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(posAttribLocation);
 
     GLuint colorAttribLocation = glGetAttribLocation(shaderProgram, "aColor");
     glVertexAttribPointer(
@@ -76,13 +83,11 @@ int main(void)
         4,                               // 3 компоненти: r, g, b
         GL_FLOAT,                        // тип даних
         GL_FALSE,                        // не нормалізувати
-        6 * sizeof(float),               // stride: 5 float-а на вершину
+        6 * sizeof(float),               // stride: 6 float-а на вершину
         (void*)(2 * sizeof(float))       // offset: після x, y
         );
-    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(colorAttribLocation);
 
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0); // деактивувати VBO
     glBindVertexArray(0); // деактивувати VAO
 
     /* Loop until the user closes the window */
@@ -93,7 +98,8 @@ int main(void)
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
