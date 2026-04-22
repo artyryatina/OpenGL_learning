@@ -59,8 +59,9 @@ int main(void)
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // bind = activate
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    GLuint posAttribLocation = glGetAttribLocation(shaderProgram, "aPos");
     glVertexAttribPointer(
-        0,                  // location - 0
+        posAttribLocation,  // location - 0
         2,                  // 2 компоненти: x, y
         GL_FLOAT,           // тип даних
         GL_FALSE,           // не нормалізувати
@@ -69,8 +70,9 @@ int main(void)
         );
     glEnableVertexAttribArray(0);
 
+    GLuint colorAttribLocation = glGetAttribLocation(shaderProgram, "aColor");
     glVertexAttribPointer(
-        1,                               // location - 1
+        colorAttribLocation,             // location - 1
         4,                               // 3 компоненти: r, g, b
         GL_FLOAT,                        // тип даних
         GL_FALSE,                        // не нормалізувати
