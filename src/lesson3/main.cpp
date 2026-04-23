@@ -38,12 +38,15 @@ int main(void)
         vertexShaderName,
         fragmentShaderName);
 
+    GLint colorUniformPos = glGetUniformLocation(shaderProgram, "uColor");
+    GLint shiftUniformPos = glGetUniformLocation(shaderProgram, "uShift");
+
     float vertices[] = {  // float* vertices
-        // позиція     // колір
-        -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,  1.0f,    // червоний
-         0.5f, -0.5f,   1.0f, 1.0f, 0.0f,  1.0f,    // жовтий
-         0.5f,  0.5f,   0.0f, 1.0f, 0.0f,  1.0f,    // зелений
-        -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,  1.0f,     // синій
+        // позиція
+        -0.5f, -0.5f,
+         0.5f, -0.5f,
+         0.5f,  0.5f,
+        -0.5f,  0.5f,
     };
 
     unsigned int indices[] = {
@@ -68,25 +71,14 @@ int main(void)
 
     GLuint posAttribLocation = glGetAttribLocation(shaderProgram, "aPos");
     glVertexAttribPointer(
-        posAttribLocation,  // location - 0
+        posAttribLocation,  // location - 0 знайдена командою glGetAttribLocation
         2,                  // 2 компоненти: x, y
         GL_FLOAT,           // тип даних
         GL_FALSE,           // не нормалізувати
-        6 * sizeof(float),  // stride: 6 float-а на вершину
+        2 * sizeof(float),  // stride: 2 float-а на вершину
         (void*)0            // offset: починаємо з 0
         );
     glEnableVertexAttribArray(posAttribLocation);
-
-    GLuint colorAttribLocation = glGetAttribLocation(shaderProgram, "aColor");
-    glVertexAttribPointer(
-        colorAttribLocation,             // location - 1
-        4,                               // 3 компоненти: r, g, b
-        GL_FLOAT,                        // тип даних
-        GL_FALSE,                        // не нормалізувати
-        6 * sizeof(float),               // stride: 6 float-а на вершину
-        (void*)(2 * sizeof(float))       // offset: після x, y
-        );
-    glEnableVertexAttribArray(colorAttribLocation);
 
     glBindVertexArray(0); // деактивувати VAO
 
@@ -97,8 +89,10 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
+        glUniform4f(colorUniformPos, 0.0f, 0.0f, 1.0f, 1.0f);
+        glUniform4f(shiftUniformPos, 0.3f, 0.0f,0.0f, 0.0f);
         glBindVertexArray(VAO);
-        // glDrawArrays(GL_TRIANGLES, 0, 6);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         /* Swap front and back buffers */

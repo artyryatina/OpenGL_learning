@@ -1,10 +1,9 @@
 #version 330 core
 out vec4 ourColor;
 
-layout(location = 0) in vec4 aPos;
-layout(location = 1) in vec4 aColor;
+in vec4 aPos;
+uniform vec4 uShift;
 
 void main() {
-    gl_Position = aPos;
-    ourColor = aColor;
+    gl_Position = aPos + uShift;
 }
