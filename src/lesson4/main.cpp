@@ -39,8 +39,9 @@ int main(void)
         vertexShaderName,
         fragmentShaderName);
 
-    GLint colorUniformPos = glGetUniformLocation(shaderProgram, "uColor");
-    GLint shiftUniformPos = glGetUniformLocation(shaderProgram, "uShift");
+    // GLint colorUniformPos = glGetUniformLocation(shaderProgram, "uColor");
+    // GLint shiftUniformPos = glGetUniformLocation(shaderProgram, "uShift");
+    GLint texture_loc = glGetUniformLocation(shaderProgram, "uTexture");
 
     float vertices[] = {  // float* vertices
         /* координати */  -0.5f, -0.5f,  /* тестурні координати */  0.0f, 0.0f,  //  0
@@ -93,7 +94,7 @@ int main(void)
 
     glBindVertexArray(0); // деактивувати VAO
 
-    unsigned int texture = loadTexture("res/texture/field.jpg");
+    unsigned int texture = loadTexture("res/textures/house.jpg");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE))
@@ -102,8 +103,9 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
-        glUniform4f(colorUniformPos, 0.0f, 0.0f, 1.0f, 1.0f);
-        glUniform4f(shiftUniformPos, 0.3f, 0.0f,0.0f, 0.0f);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glUniform1i(texture_loc, 0);
         glBindVertexArray(VAO);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

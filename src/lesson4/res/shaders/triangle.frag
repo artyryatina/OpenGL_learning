@@ -1,8 +1,11 @@
 #version 330 core
 
-uniform vec4 uColor;
+in vec2 vTexCoords;
+uniform sampler2D uTexture;
+
 out vec4 FragColor;
 
 void main() {
-    FragColor = uColor;
+    vec4 color = texture(uTexture, vTexCoords);
+    FragColor = color; // Колір отриманий із текстури
 }
