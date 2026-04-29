@@ -2,7 +2,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "../utils/shader_utils.h"
+#include "texture.h"
+#include "shader_utils.h"
 
 int main(void)
 {
@@ -42,11 +43,10 @@ int main(void)
     GLint shiftUniformPos = glGetUniformLocation(shaderProgram, "uShift");
 
     float vertices[] = {  // float* vertices
-        // позиція
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.5f,  0.5f,
-        -0.5f,  0.5f,
+        /* координати */  -0.5f, -0.5f,  /* тестурні координати */  0.0f, 0.0f,  //  0
+        /* координати */   0.5f, -0.5f,  /* тестурні координати */  1.0f, 0.0f, // 1
+        /* координати */   0.5f, 0.5f,   /* тестурні координати */  1.0f, 1.0f, // 2
+        /* координати */  -0.5f, 0.5f,   /* тестурні координати */  0.0f, 1.0f, // 3
     };
 
     unsigned int indices[] = {
@@ -75,12 +75,25 @@ int main(void)
         2,                  // 2 компоненти: x, y
         GL_FLOAT,           // тип даних
         GL_FALSE,           // не нормалізувати
-        2 * sizeof(float),  // stride: 2 float-а на вершину
+        4 * sizeof(float),  // stride: 4 float-а на вершину
         (void*)0            // offset: починаємо з 0
         );
     glEnableVertexAttribArray(posAttribLocation);
 
+    GLuint  textureCoordsAttribLocation = glGetAttribLocation(shaderProgram, "aUV");
+    glVertexAttribPointer(
+         textureCoordsAttribLocation,  // location - 0 знайдена командою glGetAttribLocation
+        2,                          // 2 компоненти: u, v
+        GL_FLOAT,                   // тип даних
+        GL_FALSE,                   // не нормалізувати
+        4 * sizeof(float),          // stride: 4 float-а на вершину
+        (void*)(2 * sizeof(float))  // offset: починаємо з 2
+        );
+    glEnableVertexAttribArray( textureCoordsAttribLocation);
+
     glBindVertexArray(0); // деактивувати VAO
+
+    unsigned int texture = loadTexture("res/texture/field.jpg");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE))
@@ -101,6 +114,12 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &indexBuffer);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteProgram(shaderProgram);
+    glDeleteTextures(1, &texture);
 
     glfwTerminate();
     return 0;

@@ -2,8 +2,8 @@
 out vec4 ourColor;
 
 in vec4 aPos;
-uniform vec4 uShift;
+in vec4 aUV;
 
 void main() {
-    gl_Position = aPos + uShift;
+    gl_Position = aPos;
 }
