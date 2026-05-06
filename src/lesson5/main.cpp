@@ -39,10 +39,6 @@ int main(void)
         vertexShaderName,
         fragmentShaderName);
 
-    // GLint colorUniformPos = glGetUniformLocation(shaderProgram, "uColor");
-    // GLint shiftUniformPos = glGetUniformLocation(shaderProgram, "uShift");
-    GLint texture_loc = glGetUniformLocation(shaderProgram, "uTexture");
-
     float vertices[] = {  // float* vertices
         /* координати */  -0.5f, -0.5f,  /* тестурні координати */  0.0f, 0.0f,  //  0
         /* координати */   0.5f, -0.5f,  /* тестурні координати */  1.0f, 0.0f, // 1
@@ -51,8 +47,8 @@ int main(void)
     };
 
     unsigned int indices[] = {
-        0,1,2,
-        0,2,3
+        0, 1, 2, // перший трикутник
+        0, 2, 3, // другий трикутник
     };
 
     GLuint VBO, indexBuffer; // data - ідентифікатор для даних - місток CPU та GPU
@@ -94,7 +90,15 @@ int main(void)
 
     glBindVertexArray(0); // деактивувати VAO
 
-    unsigned int texture = loadTexture("res/textures/house.jpg");
+    unsigned int textureHouse = loadTexture("res/textures/house.jpg");
+    unsigned int textureGirl = loadTexture("res/textures/girl.jpg");
+    unsigned int textureField = loadTexture("res/textures/field.jpg");
+    unsigned int textureGhost= loadTexture("res/textures/ghost.jpg");
+
+    GLint textureHouse_loc = glGetUniformLocation(shaderProgram, "uTextureHouse");
+    GLint textureGirl_loc = glGetUniformLocation(shaderProgram, "uTextureGirl");
+    GLint textureField_loc = glGetUniformLocation(shaderProgram, "uTextureField");
+    GLint textureGhost_loc = glGetUniformLocation(shaderProgram, "uTextureGhost");
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE))
@@ -103,9 +107,23 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
+
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glUniform1i(texture_loc, 0);
+        glBindTexture(GL_TEXTURE_2D, textureHouse);
+        glUniform1i(textureHouse_loc, 0);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textureGirl);
+        glUniform1i(textureGirl_loc, 1);
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, textureField);
+        glUniform1i(textureField_loc, 2);
+
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, textureGhost);
+        glUniform1i(textureGhost_loc, 3);
+
         glBindVertexArray(VAO);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -121,7 +139,11 @@ int main(void)
     glDeleteBuffers(1, &indexBuffer);
     glDeleteVertexArrays(1, &VAO);
     glDeleteProgram(shaderProgram);
-    glDeleteTextures(1, &texture);
+
+    glDeleteTextures(1, &textureHouse);
+    glDeleteTextures(1, &textureGirl);
+    glDeleteTextures(1, &textureField);
+    glDeleteTextures(1, &textureGhost);
 
     glfwTerminate();
     return 0;
