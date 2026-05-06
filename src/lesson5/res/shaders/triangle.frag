@@ -7,6 +7,8 @@ uniform sampler2D uTextureGirl;
 uniform sampler2D uTextureField;
 uniform sampler2D uTextureGhost;
 
+uniform float uT;
+
 out vec4 FragColor;
 
 void main() {
@@ -14,5 +16,7 @@ void main() {
     vec4 colorGirl = texture(uTextureGirl, vTexCoords);
     vec4 colorField = texture(uTextureField, vTexCoords);
     vec4 colorGhost = texture(uTextureGhost, vTexCoords);
-    FragColor = colorGirl; // Колір отриманий із текстури
+
+    FragColor = mix(colorGirl, colorHouse, uT);
+//    FragColor = colorGirl; // Колір отриманий із текстури
 }
