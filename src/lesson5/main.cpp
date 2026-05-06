@@ -5,6 +5,9 @@
 #include "texture.h"
 #include "shader_utils.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 int main(void)
 {
     GLFWwindow* window;
@@ -31,6 +34,7 @@ int main(void)
         return -1;
     }
 
+    glfwSwapInterval(1);  // синхронізує рендер-цикл з частотою екрану
     glClearColor(0.9, 0.9, 0.9,  1.0);
 
     std::string vertexShaderName = "res/shaders/triangle.vert";
@@ -100,9 +104,22 @@ int main(void)
     GLint textureField_loc = glGetUniformLocation(shaderProgram, "uTextureField");
     GLint textureGhost_loc = glGetUniformLocation(shaderProgram, "uTextureGhost");
 
+    GLint t_loc = glGetUniformLocation(shaderProgram, "uT");
+    GLint transform_loc = glGetUniformLocation(shaderProgram, "uTransformation");
+
+    float t = 0.0f;
+    float deltaTime = 1.0f / 60.0f;
+    auto transformation = glm::mat4(1.0f);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE))
     {
+
+        t = t + deltaTime;
+        if (t >= 1.0f || t <= 0.0f) {
+            deltaTime = -deltaTime;
+        }
+
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -123,6 +140,11 @@ int main(void)
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, textureGhost);
         glUniform1i(textureGhost_loc, 3);
+
+        glUniform1f(t_loc, t);
+
+        transformation = glm::rotate(transformation, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(transformation));
 
         glBindVertexArray(VAO);
 

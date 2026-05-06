@@ -6,8 +6,10 @@ in vec2 aUV;
 
 out vec2 vTexCoords;
 
+uniform mat4 uTransformation;
+
 void main() {
     vTexCoords = aUV;
     vTexCoords.y = 1.0 - vTexCoords.y;
-    gl_Position = aPos;
+    gl_Position = uTransformation * aPos;
 }
