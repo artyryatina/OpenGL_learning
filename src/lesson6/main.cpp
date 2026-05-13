@@ -20,8 +20,11 @@ int main(void)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+
+    auto width = 1280;
+    auto height = 720;
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -43,16 +46,51 @@ int main(void)
         vertexShaderName,
         fragmentShaderName);
 
-    float vertices[] = {  // float* vertices
-        /* координати */  -0.5f, -0.5f,  /* тестурні координати */  0.0f, 0.0f,  //  0
-        /* координати */   0.5f, -0.5f,  /* тестурні координати */  1.0f, 0.0f, // 1
-        /* координати */   0.5f, 0.5f,   /* тестурні координати */  1.0f, 1.0f, // 2
-        /* координати */  -0.5f, 0.5f,   /* тестурні координати */  0.0f, 1.0f, // 3
+    float vertices[] = {
+        // -------- Передня грань (червона) --------
+        0.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f,
+
+       // -------- Задня грань (зелена) --------
+        0.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,   0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 1.0f,   0.0f, 1.0f, 0.0f,
+
+       // -------- Ліва грань (синя) --------
+        0.0f, 0.0f, 0.0f,   0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f,   0.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,   0.0f, 0.0f, 1.0f,
+
+       // -------- Права грань (жовта) --------
+        1.0f, 0.0f, 0.0f,   1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,   1.0f, 1.0f, 0.0f,
+        1.0f, 1.0f, 1.0f,   1.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 1.0f,   1.0f, 1.0f, 0.0f,
+
+       // -------- Нижня грань (бірюзова) --------
+        0.0f, 0.0f, 0.0f,   0.0f, 1.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,   0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 1.0f,   0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 0.0f,   0.0f, 1.0f, 1.0f,
+
+       // -------- Верхня грань (фіолетова) --------
+        0.0f, 1.0f, 0.0f,   1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,   1.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 1.0f,   1.0f, 0.0f, 1.0f,
     };
 
-    unsigned int indices[] = {
-        0, 1, 2, // перший трикутник
-        0, 2, 3, // другий трикутник
+    unsigned int indices[] = {  // wrong indices
+        2, 1, 0,  3, 2, 0,       // передня
+        4, 5, 6,  6, 7, 4,       // задня
+        8, 9,10, 10,11, 8,       // ліва
+       12,13,14, 14,15,12,       // права
+       16,17,18, 18,19,16,       // нижня
+       20,21,22, 22,23,20        // верхня
     };
 
     GLuint VBO, indexBuffer; // data - ідентифікатор для даних - місток CPU та GPU
@@ -73,82 +111,69 @@ int main(void)
     GLuint posAttribLocation = glGetAttribLocation(shaderProgram, "aPos");
     glVertexAttribPointer(
         posAttribLocation,  // location - 0 знайдена командою glGetAttribLocation
-        2,                  // 2 компоненти: x, y
+        3,                  // 3 компоненти: x, y, z
         GL_FLOAT,           // тип даних
         GL_FALSE,           // не нормалізувати
-        4 * sizeof(float),  // stride: 4 float-а на вершину
+        6 * sizeof(float),  // stride: 6 float-а на вершину
         (void*)0            // offset: починаємо з 0
-        );
+    );
     glEnableVertexAttribArray(posAttribLocation);
 
-    GLuint  textureCoordsAttribLocation = glGetAttribLocation(shaderProgram, "aUV");
+    GLuint  colorAttribLocation = glGetAttribLocation(shaderProgram, "aColor");
     glVertexAttribPointer(
-         textureCoordsAttribLocation,  // location - 0 знайдена командою glGetAttribLocation
-        2,                          // 2 компоненти: u, v
+         colorAttribLocation,  // location - 0 знайдена командою glGetAttribLocation
+        3,                          // 3 компоненти: r, g, b,
         GL_FLOAT,                   // тип даних
         GL_FALSE,                   // не нормалізувати
-        4 * sizeof(float),          // stride: 4 float-а на вершину
-        (void*)(2 * sizeof(float))  // offset: починаємо з 2
-        );
-    glEnableVertexAttribArray( textureCoordsAttribLocation);
+        6 * sizeof(float),          // stride: 6 float-а на вершину
+        (void*)(3 * sizeof(float))  // offset: починаємо з 3
+    );
+    glEnableVertexAttribArray( colorAttribLocation);
 
     glBindVertexArray(0); // деактивувати VAO
 
-    unsigned int textureHouse = loadTexture("res/textures/house.jpg");
-    unsigned int textureGirl = loadTexture("res/textures/girl.jpg");
-    unsigned int textureField = loadTexture("res/textures/field.jpg");
-    unsigned int textureGhost= loadTexture("res/textures/ghost.jpg");
+    GLint model_loc = glGetUniformLocation(shaderProgram, "uModel");
+    GLint view_loc = glGetUniformLocation(shaderProgram, "uView");
+    GLint proj_loc = glGetUniformLocation(shaderProgram, "uProjection");
 
-    GLint textureHouse_loc = glGetUniformLocation(shaderProgram, "uTextureHouse");
-    GLint textureGirl_loc = glGetUniformLocation(shaderProgram, "uTextureGirl");
-    GLint textureField_loc = glGetUniformLocation(shaderProgram, "uTextureField");
-    GLint textureGhost_loc = glGetUniformLocation(shaderProgram, "uTextureGhost");
+    glm::mat4 model = glm::mat4(1.0f);
 
-    GLint t_loc = glGetUniformLocation(shaderProgram, "uT");
-    GLint transform_loc = glGetUniformLocation(shaderProgram, "uTransformation");
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(0.0f, 1.5f, -4.0f), // позиція камери
+        glm::vec3(0.0f, 0.0f, 0.0f), // куди дивимось
+        glm::vec3(0.0f, 1.0f, 0.0f) // вектор вгору
+    );
 
-    float t = 0.0f;
-    float deltaTime = 1.0f / 60.0f;
-    auto transformation = glm::mat4(1.0f);
+    glm::mat4 projection = glm::perspective(
+        glm::radians(45.0f),
+        (float)width / (float)height,
+        0.1f,
+        100.0f
+    );
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    // glCullFace(GL_FRONT);
+    // glFrontFace(GL_CCW); // GL_CW.
+    // glFrontFace(GL_CW); // GL_CW.
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE))
     {
 
-        t = t + deltaTime;
-        if (t >= 1.0f || t <= 0.0f) {
-            deltaTime = -deltaTime;
-        }
-
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureHouse);
-        glUniform1i(textureHouse_loc, 0);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, textureGirl);
-        glUniform1i(textureGirl_loc, 1);
-
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, textureField);
-        glUniform1i(textureField_loc, 2);
-
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, textureGhost);
-        glUniform1i(textureGhost_loc, 3);
-
-        glUniform1f(t_loc, t);
-
-        transformation = glm::rotate(transformation, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        glUniformMatrix4fv(transform_loc, 1, GL_FALSE, glm::value_ptr(transformation));
+        model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection));
 
         glBindVertexArray(VAO);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -161,11 +186,6 @@ int main(void)
     glDeleteBuffers(1, &indexBuffer);
     glDeleteVertexArrays(1, &VAO);
     glDeleteProgram(shaderProgram);
-
-    glDeleteTextures(1, &textureHouse);
-    glDeleteTextures(1, &textureGirl);
-    glDeleteTextures(1, &textureField);
-    glDeleteTextures(1, &textureGhost);
 
     glfwTerminate();
     return 0;
