@@ -47,13 +47,13 @@ int main(void)
         fragmentShaderName);
 
     float vertices[] = {
-        // -------- Передня грань (червона) --------
+        // -------- Задня грань (червона) --------
         0.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
         1.0f, 0.0f, 0.0f,   1.0f, 0.0f, 0.0f,
         1.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,   1.0f, 0.0f, 0.0f,
 
-       // -------- Задня грань (зелена) --------
+       // -------- Передня грань (зелена) --------
         0.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,
         1.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,
         1.0f, 1.0f, 1.0f,   0.0f, 1.0f, 0.0f,
@@ -85,12 +85,12 @@ int main(void)
     };
 
     unsigned int indices[] = {  // wrong indices
-        2, 1, 0,  3, 2, 0,       // передня
-        4, 5, 6,  6, 7, 4,       // задня
-        8, 9,10, 10,11, 8,       // ліва
-       12,13,14, 14,15,12,       // права
-       16,17,18, 18,19,16,       // нижня
-       20,21,22, 22,23,20        // верхня
+        2, 1, 0,  3, 2, 0,       // задня червона
+        4, 5, 6,  4, 6, 7,       // передня зелена
+        10, 9, 8, 11,10, 8,       // ліва синя
+       12,13,14, 14,15,12,       // права жовта
+       18,17,16, 19,18,16,       // нижня
+       22,21,20, 23,22,20        // верхня
     };
 
     GLuint VBO, indexBuffer; // data - ідентифікатор для даних - місток CPU та GPU
@@ -139,8 +139,8 @@ int main(void)
     glm::mat4 model = glm::mat4(1.0f);
 
     glm::mat4 view = glm::lookAt(
-        glm::vec3(0.0f, 1.5f, -4.0f), // позиція камери
-        glm::vec3(0.0f, 0.0f, 0.0f), // куди дивимось
+        glm::vec3(0.5f, 0.5f, 4.0f), // позиція камери
+        glm::vec3(0.5f, 0.5f, 0.5f), // куди дивимось
         glm::vec3(0.0f, 1.0f, 0.0f) // вектор вгору
     );
 
@@ -166,7 +166,7 @@ int main(void)
 
         glUseProgram(shaderProgram);
 
-        model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
         glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection));
