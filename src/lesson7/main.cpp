@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -24,24 +25,25 @@ int main(void)
     auto width = 1280;
     auto height = 720;
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(width, height, "Cube", NULL, NULL);
     if (!window)
     {
+        std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
-
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
     glfwSwapInterval(1);  // синхронізує рендер-цикл з частотою екрану
     glClearColor(0.9, 0.9, 0.9,  1.0);
 
-    std::string vertexShaderName = "res/shaders/triangle.vert";
-    std::string fragmentShaderName = "res/shaders/triangle.frag";
+    std::string vertexShaderName = "res/shaders/cube.vert";
+    std::string fragmentShaderName = "res/shaders/cube.frag";
     GLuint shaderProgram = createProgram(
         vertexShaderName,
         fragmentShaderName);
@@ -84,7 +86,7 @@ int main(void)
         0.0f, 1.0f, 1.0f,   1.0f, 0.0f, 1.0f,
     };
 
-    unsigned int indices[] = {  // wrong indices
+    unsigned int indices[] = {
         2, 1, 0,  3, 2, 0,       // задня червона
         4, 5, 6,  4, 6, 7,       // передня зелена
         10, 9, 8, 11,10, 8,       // ліва синя
@@ -166,7 +168,7 @@ int main(void)
 
         glUseProgram(shaderProgram);
 
-        model = glm::rotate(model, glm::radians(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        // model = glm::rotate(model, glm::radians(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
         glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection));
